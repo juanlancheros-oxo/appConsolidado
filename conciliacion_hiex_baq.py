@@ -47,6 +47,9 @@ h3 { color: #49677a !important; font-weight: 600 !important; }
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 .upload-card-sub {
     font-size: 0.75rem;
@@ -115,11 +118,49 @@ hr { border-color: #cec7c3; }
 /* ── Banners ── */
 [data-testid="stAlert"] { border-radius: 8px; }
 
-/* ── Upload dropzone ── */
-[data-testid="stFileUploadDropzone"] {
+/* ── File uploader: forzar fondo claro ── */
+[data-testid="stFileUploader"],
+[data-testid="stFileUploader"] > div,
+[data-testid="stFileUploader"] section,
+[data-testid="stFileUploadDropzone"],
+[data-testid="stFileUploadDropzone"] > div {
     background-color: #f9f7f5 !important;
-    border: 2px dashed #cec7c3 !important;
+    color: #2b2b2b !important;
+    border: 2px dashed #c6c6c6 !important;
     border-radius: 8px !important;
+}
+[data-testid="stFileUploadDropzone"] *,
+[data-testid="stFileUploaderFileName"],
+[data-testid="stFileUploaderFileData"] {
+    color: #2b2b2b !important;
+}
+[data-testid="stFileUploadDropzone"] button {
+    background-color: #ffffff !important;
+    border: 1px solid #cec7c3 !important;
+    color: #49677a !important;
+    border-radius: 6px !important;
+}
+[data-testid="stFileUploadDropzone"] small,
+[data-testid="stFileUploadDropzone"] span,
+[data-testid="stFileUploadDropzone"] p {
+    color: #888888 !important;
+}
+
+/* ── Inputs en expander ── */
+.stTextInput input, .stSelectbox > div > div, .stDateInput input {
+    background-color: #ffffff !important;
+    border-color: #cec7c3 !important;
+    color: #2b2b2b !important;
+    border-radius: 6px !important;
+}
+section[data-testid="stFileUploadDropzone"] > div {
+    background-color: #f9f7f5 !important;
+}
+/* Remove dark section wrapper around file uploader */
+[data-testid="stFileUploader"] > div {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
 }
 
 /* ── Select / date input ── */
@@ -135,7 +176,7 @@ hr { border-color: #cec7c3; }
 st.markdown("""
 <div style='text-align:center; padding: 2rem 0 1rem 0;'>
   <div style='font-size:2.4rem; font-weight:800; color:#49677a; border-bottom: 3px solid #c19528; display:inline-block; padding-bottom:0.4rem;'>
-    📊 Constructor de Conciliación Mensual
+    Constructor de Conciliación Mensual
   </div>
   <div style='font-size:1rem; color:#5f6d5f; margin-top:0.5rem; font-weight:500;'>OxoHotel · Herramienta contable</div>
 </div>
@@ -207,7 +248,7 @@ def title_block(ws, row, empresa, nit, titulo, mes_anio, span="B:H"):
     return row + 1
 
 # ── Sección 1: Archivos fuente ──────────────────────────────────────────
-st.markdown("### 📁 Archivos fuente")
+st.markdown("### Archivos fuente")
 st.markdown(
     "<p style='color:#888; font-size:0.9rem; margin-top:-0.8rem;'>"
     "<b>Mes 1</b> = mes a conciliar &nbsp;·&nbsp; <b>Mes 2</b> = mes siguiente (auxiliar)</p>",
@@ -216,28 +257,28 @@ st.markdown(
 
 c1, c2 = st.columns(2)
 with c1:
-    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Auxiliar Mes 1</div>"
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>Auxiliar Mes 1</div>"
                 "<div class='upload-card-sub'>Mes principal a conciliar</div></div>",
                 unsafe_allow_html=True)
     up_ago = st.file_uploader("Auxiliar Mes 1", type=["xlsx"], label_visibility="collapsed")
 
-    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Auxiliar Mes 2</div>"
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>Auxiliar Mes 2</div>"
                 "<div class='upload-card-sub'>Mes siguiente (auxiliar)</div></div>",
                 unsafe_allow_html=True)
     up_sep = st.file_uploader("Auxiliar Mes 2", type=["xlsx"], label_visibility="collapsed")
 
-    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Consolidados</div>"
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>Consolidados</div>"
                 "<div class='upload-card-sub'>Archivo de consolidados</div></div>",
                 unsafe_allow_html=True)
     up_con = st.file_uploader("Consolidados", type=["xlsx"], label_visibility="collapsed")
 
 with c2:
-    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Consulta Transacciones</div>"
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>Consulta Transacciones</div>"
                 "<div class='upload-card-sub'>Transacciones del mes</div></div>",
                 unsafe_allow_html=True)
     up_tra = st.file_uploader("Consulta Transacciones", type=["xlsx"], label_visibility="collapsed")
 
-    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Resumen Mi Planilla</div>"
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>Resumen Mi Planilla</div>"
                 "<div class='upload-card-sub'>Planilla SS del mes</div></div>",
                 unsafe_allow_html=True)
     up_pla = st.file_uploader("Resumen Mi Planilla", type=["xls","xlsx"], label_visibility="collapsed")
@@ -245,7 +286,7 @@ with c2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ── Sección 2: Parámetros ────────────────────────────────────────────────
-with st.expander("⚙️ Parámetros y observaciones"):
+with st.expander("Parámetros y observaciones"):
     pc1, pc2 = st.columns(2)
     with pc1:
         periodo = st.selectbox("Periodo", ["202508","202509"], index=0)
@@ -287,7 +328,7 @@ if not files_ok:
     st.warning(f"⚠️ Faltan archivos: {', '.join(missing)}")
     st.stop()
 
-if st.button("🚀 Generar conciliación completa", type="primary"):
+if st.button("Generar conciliación completa", type="primary"):
   with st.spinner("Procesando..."):
    try:
     # ── Carga ──────────────────────────────────────────────────────────
