@@ -7,7 +7,71 @@ from openpyxl.utils import get_column_letter
 import io
 from datetime import date, datetime
 
-st.set_page_config(page_title="Conciliación Mensual – OxoHotel", layout="wide", page_icon="📊")
+st.set_page_config(page_title="Conciliación Mensual – OxoHotel", layout="wide", page_icon="📊",
+                   initial_sidebar_state="expanded")
+
+st.markdown("""
+<style>
+/* ── Fondo general ── */
+[data-testid="stAppViewContainer"] { background-color: #f5f3f1; }
+[data-testid="stHeader"]            { background-color: #f5f3f1; }
+html, body, .main { background-color: #f5f3f1 !important; }
+
+/* ── Texto general ── */
+body, p, span, div, label { color: #2b2b2b; }
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] { background-color: #49677a !important; }
+[data-testid="stSidebar"] * { color: #f5f3f1 !important; }
+[data-testid="stSidebar"] [data-testid="stFileUploadDropzone"] {
+    background-color: #5f6d5f; border-color: #cec7c3;
+}
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stDateInput > div > div > input {
+    background-color: #5f6d5f !important; color: #f5f3f1 !important; border-color: #cec7c3;
+}
+
+/* ── Título principal ── */
+h1 { color: #49677a !important; font-weight: 700 !important;
+     border-bottom: 3px solid #c19528; padding-bottom: 0.4rem; }
+
+/* ── Botón principal ── */
+[data-testid="stButton"] > button {
+    background-color: #c19528 !important; color: white !important;
+    border: none !important; border-radius: 6px !important;
+    font-weight: 600 !important; font-size: 1rem !important;
+}
+[data-testid="stButton"] > button:hover { background-color: #a07d20 !important; }
+
+/* ── Botón descarga ── */
+[data-testid="stDownloadButton"] > button {
+    background-color: #5f6d5f !important; color: white !important;
+    border: none !important; border-radius: 6px !important; font-weight: 600 !important;
+}
+[data-testid="stDownloadButton"] > button:hover { background-color: #49677a !important; }
+
+/* ── Métricas ── */
+[data-testid="stMetric"] {
+    background-color: #ffffff; border-left: 4px solid #49677a;
+    border-radius: 6px; padding: 0.8rem 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+[data-testid="stMetricLabel"] p { color: #5f6d5f !important; font-weight: 600; }
+[data-testid="stMetricValue"]   { color: #49677a !important; }
+
+/* ── Expander en sidebar ── */
+[data-testid="stSidebar"] details { background-color: #5f6d5f; border-radius: 6px; }
+[data-testid="stSidebar"] summary { color: #f5f3f1 !important; font-weight: 600; }
+
+/* ── Separador y footer ── */
+hr { border-color: #cec7c3; }
+.stCaption { color: #5f6d5f !important; }
+
+/* ── Info banner ── */
+[data-testid="stAlert"] { border-radius: 6px; }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("📊 Constructor de Conciliación Mensual – OxoHotel")
 
 # ── Estilos ───────────────────────────────────────────────────────────────
