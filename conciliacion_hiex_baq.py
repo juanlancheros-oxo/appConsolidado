@@ -7,72 +7,139 @@ from openpyxl.utils import get_column_letter
 import io
 from datetime import date, datetime
 
-st.set_page_config(page_title="Conciliación Mensual – OxoHotel", layout="wide", page_icon="📊",
-                   initial_sidebar_state="expanded")
+st.set_page_config(page_title="Conciliación Mensual – OxoHotel",
+                   layout="centered", page_icon="📊",
+                   initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
+/* ── Ocultar sidebar completamente ── */
+[data-testid="stSidebar"] { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
+
 /* ── Fondo general ── */
-[data-testid="stAppViewContainer"] { background-color: #f5f3f1; }
-[data-testid="stHeader"]            { background-color: #f5f3f1; }
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
 html, body, .main { background-color: #f5f3f1 !important; }
 
 /* ── Texto general ── */
 body, p, span, div, label { color: #2b2b2b; }
 
-/* ── Sidebar ── */
-[data-testid="stSidebar"] { background-color: #49677a !important; }
-[data-testid="stSidebar"] * { color: #f5f3f1 !important; }
-[data-testid="stSidebar"] [data-testid="stFileUploadDropzone"] {
-    background-color: #5f6d5f; border-color: #cec7c3;
-}
-[data-testid="stSidebar"] .stSelectbox > div > div,
-[data-testid="stSidebar"] .stDateInput > div > div > input {
-    background-color: #5f6d5f !important; color: #f5f3f1 !important; border-color: #cec7c3;
-}
-
 /* ── Título principal ── */
 h1 { color: #49677a !important; font-weight: 700 !important;
-     border-bottom: 3px solid #c19528; padding-bottom: 0.4rem; }
+     border-bottom: 3px solid #c19528; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+
+h3 { color: #49677a !important; font-weight: 600 !important; }
+
+/* ── Cards de archivos ── */
+.upload-card {
+    background: #ffffff;
+    border: 1px solid #cec7c3;
+    border-radius: 10px;
+    padding: 1rem 1.2rem 0.5rem 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    margin-bottom: 0.3rem;
+}
+.upload-card-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #49677a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.3rem;
+}
+.upload-card-sub {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Expander parámetros ── */
+details {
+    background: #ffffff;
+    border: 1px solid #cec7c3;
+    border-radius: 10px;
+    padding: 0.2rem 1rem;
+    margin-bottom: 1rem;
+}
+summary {
+    font-weight: 600;
+    color: #49677a !important;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.6rem 0;
+}
 
 /* ── Botón principal ── */
 [data-testid="stButton"] > button {
     background-color: #c19528 !important; color: white !important;
-    border: none !important; border-radius: 6px !important;
-    font-weight: 600 !important; font-size: 1rem !important;
+    border: none !important; border-radius: 8px !important;
+    font-weight: 700 !important; font-size: 1.05rem !important;
+    width: 100%; padding: 0.75rem !important;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 8px rgba(193,149,40,0.3);
 }
 [data-testid="stButton"] > button:hover { background-color: #a07d20 !important; }
 
 /* ── Botón descarga ── */
 [data-testid="stDownloadButton"] > button {
-    background-color: #5f6d5f !important; color: white !important;
-    border: none !important; border-radius: 6px !important; font-weight: 600 !important;
+    background-color: #49677a !important; color: white !important;
+    border: none !important; border-radius: 8px !important;
+    font-weight: 700 !important; font-size: 1.05rem !important;
+    width: 100%; padding: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(73,103,122,0.3);
 }
-[data-testid="stDownloadButton"] > button:hover { background-color: #49677a !important; }
+[data-testid="stDownloadButton"] > button:hover { background-color: #5f6d5f !important; }
 
 /* ── Métricas ── */
 [data-testid="stMetric"] {
     background-color: #ffffff; border-left: 4px solid #49677a;
-    border-radius: 6px; padding: 0.8rem 1rem;
+    border-radius: 8px; padding: 0.8rem 1rem;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 [data-testid="stMetricLabel"] p { color: #5f6d5f !important; font-weight: 600; }
 [data-testid="stMetricValue"]   { color: #49677a !important; }
 
-/* ── Expander en sidebar ── */
-[data-testid="stSidebar"] details { background-color: #5f6d5f; border-radius: 6px; }
-[data-testid="stSidebar"] summary { color: #f5f3f1 !important; font-weight: 600; }
+/* ── Sección resultado ── */
+.result-box {
+    background: #ffffff; border-radius: 10px;
+    border: 1px solid #cec7c3;
+    padding: 1.5rem; margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
 
 /* ── Separador y footer ── */
 hr { border-color: #cec7c3; }
-.stCaption { color: #5f6d5f !important; }
+.stCaption { color: #5f6d5f !important; text-align: center; }
 
-/* ── Info banner ── */
-[data-testid="stAlert"] { border-radius: 6px; }
+/* ── Banners ── */
+[data-testid="stAlert"] { border-radius: 8px; }
+
+/* ── Upload dropzone ── */
+[data-testid="stFileUploadDropzone"] {
+    background-color: #f9f7f5 !important;
+    border: 2px dashed #cec7c3 !important;
+    border-radius: 8px !important;
+}
+
+/* ── Select / date input ── */
+.stSelectbox > div > div,
+.stDateInput > div > div > input {
+    border-color: #cec7c3 !important;
+    border-radius: 6px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-st.title("📊 Constructor de Conciliación Mensual – OxoHotel")
+# ── Header ──────────────────────────────────────────────────────────────
+st.markdown("""
+<div style='text-align:center; padding: 2rem 0 1rem 0;'>
+  <div style='font-size:2.4rem; font-weight:800; color:#49677a; border-bottom: 3px solid #c19528; display:inline-block; padding-bottom:0.4rem;'>
+    📊 Constructor de Conciliación Mensual
+  </div>
+  <div style='font-size:1rem; color:#5f6d5f; margin-top:0.5rem; font-weight:500;'>OxoHotel · Herramienta contable</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Estilos ───────────────────────────────────────────────────────────────
 THIN = Side(style="thin")
@@ -139,40 +206,85 @@ def title_block(ws, row, empresa, nit, titulo, mes_anio, span="B:H"):
         row += 1
     return row + 1
 
-# ── Sidebar: solo cargadores ──────────────────────────────────────────────
-st.sidebar.header("📁 Archivos fuente")
-st.sidebar.markdown("**Mes 1** = mes que se va a conciliar  \n**Mes 2** = mes siguiente (auxiliar)")
-up_ago  = st.sidebar.file_uploader("Auxiliar Mes 1",          type=["xlsx"])
-up_sep  = st.sidebar.file_uploader("Auxiliar Mes 2",          type=["xlsx"])
-up_con  = st.sidebar.file_uploader("Consolidados",            type=["xlsx"])
-up_tra  = st.sidebar.file_uploader("Consulta Transacciones",  type=["xlsx"])
-up_pla  = st.sidebar.file_uploader("Resumen Mi Planilla",     type=["xls","xlsx"])
+# ── Sección 1: Archivos fuente ──────────────────────────────────────────
+st.markdown("### 📁 Archivos fuente")
+st.markdown(
+    "<p style='color:#888; font-size:0.9rem; margin-top:-0.8rem;'>"
+    "<b>Mes 1</b> = mes a conciliar &nbsp;·&nbsp; <b>Mes 2</b> = mes siguiente (auxiliar)</p>",
+    unsafe_allow_html=True
+)
 
-st.sidebar.markdown("---")
-st.sidebar.header("⚙️ Parámetros")
-periodo    = st.sidebar.selectbox("Periodo", ["202508","202509"], index=0)
-mes_nombre = "AGOSTO" if periodo=="202508" else "SEPTIEMBRE"
-MES_ANIO   = f"{mes_nombre} DE 2025"
-EMPRESA    = "HOTEL BARRANQUILLA BUENAVISTA"
-NIT        = "900.902.403"
-CIA16      = 16
-FPLAN      = st.sidebar.date_input("Fecha planilla", value=date(2025,8,30))
+c1, c2 = st.columns(2)
+with c1:
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Auxiliar Mes 1</div>"
+                "<div class='upload-card-sub'>Mes principal a conciliar</div></div>",
+                unsafe_allow_html=True)
+    up_ago = st.file_uploader("Auxiliar Mes 1", type=["xlsx"], label_visibility="collapsed")
 
-with st.sidebar.expander("✏️ Observaciones y notas"):
-    obs_ss   = st.text_input("Obs. Seguridad Social",  f"Pago planilla {mes_nombre.capitalize()} 2025")
-    obs_nom  = st.text_input("Obs. Nómina por pagar (2505)", "FALTA PAGO LC  SE PAGA 2/SEPT/2025")
-    nota_arl = st.text_input("Nota diferencia ARL",    "PLANILLA PASANTES")
-    obs_lib  = st.text_input("Obs. Libranza",          "")
-    obs_pf   = st.text_input("Obs. Payflow",           "")
-    obs_fem  = st.text_input("Obs. Femtur",            "VALOR POR TERCEROS")
-    obs_uni  = st.text_input("Obs. Unimos",            "")
-    obs_seg  = st.text_input("Obs. Seguros empleados", f"Factura {mes_nombre.capitalize()} 2025")
-    obs_afc  = st.text_input("Obs. AFC",               "")
-    obs_136  = st.text_input("Obs. Cuentas x cobrar (136595)", "")
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Auxiliar Mes 2</div>"
+                "<div class='upload-card-sub'>Mes siguiente (auxiliar)</div></div>",
+                unsafe_allow_html=True)
+    up_sep = st.file_uploader("Auxiliar Mes 2", type=["xlsx"], label_visibility="collapsed")
 
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Consolidados</div>"
+                "<div class='upload-card-sub'>Archivo de consolidados</div></div>",
+                unsafe_allow_html=True)
+    up_con = st.file_uploader("Consolidados", type=["xlsx"], label_visibility="collapsed")
+
+with c2:
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Consulta Transacciones</div>"
+                "<div class='upload-card-sub'>Transacciones del mes</div></div>",
+                unsafe_allow_html=True)
+    up_tra = st.file_uploader("Consulta Transacciones", type=["xlsx"], label_visibility="collapsed")
+
+    st.markdown("<div class='upload-card'><div class='upload-card-title'>📂 Resumen Mi Planilla</div>"
+                "<div class='upload-card-sub'>Planilla SS del mes</div></div>",
+                unsafe_allow_html=True)
+    up_pla = st.file_uploader("Resumen Mi Planilla", type=["xls","xlsx"], label_visibility="collapsed")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ── Sección 2: Parámetros ────────────────────────────────────────────────
+with st.expander("⚙️ Parámetros y observaciones"):
+    pc1, pc2 = st.columns(2)
+    with pc1:
+        periodo = st.selectbox("Periodo", ["202508","202509"], index=0)
+    with pc2:
+        FPLAN = st.date_input("Fecha planilla", value=date(2025,8,30))
+
+    mes_nombre = "AGOSTO" if periodo=="202508" else "SEPTIEMBRE"
+
+    st.markdown("**Observaciones** *(opcionales — se imprimen en cada hoja)*")
+    oc1, oc2 = st.columns(2)
+    with oc1:
+        obs_ss   = st.text_input("Seg. Social",   f"Pago planilla {mes_nombre.capitalize()} 2025")
+        obs_nom  = st.text_input("Nómina (2505)", "FALTA PAGO LC  SE PAGA 2/SEPT/2025")
+        nota_arl = st.text_input("Nota dif. ARL", "PLANILLA PASANTES")
+        obs_lib  = st.text_input("Libranza",       "")
+        obs_pf   = st.text_input("Payflow",        "")
+    with oc2:
+        obs_fem  = st.text_input("Femtur",                      "VALOR POR TERCEROS")
+        obs_uni  = st.text_input("Unimos",                      "")
+        obs_seg  = st.text_input("Seguros",   f"Factura {mes_nombre.capitalize()} 2025")
+        obs_afc  = st.text_input("AFC",                         "")
+        obs_136  = st.text_input("Cuentas x cobrar (136595)",   "")
+
+MES_ANIO = f"{mes_nombre} DE 2025"
+EMPRESA  = "HOTEL BARRANQUILLA BUENAVISTA"
+NIT      = "900.902.403"
+CIA16    = 16
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ── Validación archivos ──────────────────────────────────────────────────
 files_ok = all([up_ago, up_con, up_tra, up_pla])
 if not files_ok:
-    st.info("👈 Carga los archivos fuente en el panel izquierdo para continuar.")
+    missing = []
+    if not up_ago: missing.append("Auxiliar Mes 1")
+    if not up_con: missing.append("Consolidados")
+    if not up_tra: missing.append("Consulta Transacciones")
+    if not up_pla: missing.append("Resumen Mi Planilla")
+    st.warning(f"⚠️ Faltan archivos: {', '.join(missing)}")
     st.stop()
 
 if st.button("🚀 Generar conciliación completa", type="primary"):
@@ -896,15 +1008,26 @@ if st.button("🚀 Generar conciliación completa", type="primary"):
     c3.metric("Pensión 238030",   f"${t_pen:,.0f}")
     c4.metric("Total planilla SS",f"${total_ss:,.0f}")
 
-    st.markdown("**Hojas generadas:** INICIO · 2370-2380 · MI PLANILLA SS · 2505 · "
-                "28150504 · 23709503 · 23704006 · 23709502 · 269596 · 23704005 · "
-                "136595 · 23803004 · 25050101 · CONSOLIDADO CESANTIAS · CONSOLIDADOS · "
-                "CONSOLIDADO INT CESANTIAS · CONSOLIDADO PRIMA · CONSOLIDADO VACACIONES · "
-                "T. DATOS · T. SS · AUXILIAR SEPTIEMBRE · AUXILIAR AGOSTO · Hoja7 · CONSULTA DE TRANSA")
+    hojas_list = ["INICIO","2370-2380","MI PLANILLA SS","2505","28150504","23709503",
+                  "23704006","23709502","269596","23704005","136595","23803004","25050101",
+                  "CONSOLIDADO CESANTIAS","CONSOLIDADOS","CONSOLIDADO INT CESANTIAS",
+                  "CONSOLIDADO PRIMA","CONSOLIDADO VACACIONES","T. DATOS","T. SS",
+                  "AUXILIAR SEPTIEMBRE","AUXILIAR AGOSTO","Hoja7","CONSULTA DE TRANSA"]
+    badges = " &nbsp;".join([
+        f"<span style='background:#e8f0e8;color:#5f6d5f;border-radius:4px;"
+        f"padding:2px 8px;font-size:0.78rem;font-weight:600;'>{h}</span>"
+        for h in hojas_list
+    ])
+    st.markdown(f"<div style='margin-top:1rem;line-height:2.2;'>{badges}</div>",
+                unsafe_allow_html=True)
 
    except Exception as e:
     st.error(f"❌ Error: {e}")
     import traceback; st.code(traceback.format_exc())
 
 st.markdown("---")
-st.caption("Herramienta contable · OxoHotel")
+st.markdown(
+    "<div style='text-align:center;color:#5f6d5f;font-size:0.82rem;padding:0.5rem 0;'>"
+    "Herramienta contable · <strong>OxoHotel</strong></div>",
+    unsafe_allow_html=True
+)
