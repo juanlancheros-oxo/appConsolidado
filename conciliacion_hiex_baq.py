@@ -32,29 +32,21 @@ h1 { color: #49677a !important; font-weight: 700 !important;
 h3 { color: #49677a !important; font-weight: 600 !important; }
 
 /* ── Cards de archivos ── */
-.upload-card {
-    background: #ffffff;
-    border: 1px solid #cec7c3;
-    border-radius: 10px;
-    padding: 1rem 1.2rem 0.5rem 1.2rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    margin-bottom: 0.3rem;
+/* ── File uploader styled as card ── */
+[data-testid="stFileUploader"] {
+    background: #ffffff !important;
+    border: 1px solid #cec7c3 !important;
+    border-radius: 10px !important;
+    padding: 1rem 1.2rem !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05) !important;
+    margin-bottom: 0.8rem !important;
 }
-.upload-card-title {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #49677a;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.3rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.upload-card-sub {
-    font-size: 0.75rem;
-    color: #888;
-    margin-bottom: 0.5rem;
+[data-testid="stFileUploader"] label {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    color: #49677a !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
 }
 
 /* ── Expander parámetros ── */
@@ -118,7 +110,7 @@ hr { border-color: #cec7c3; }
 /* ── Banners ── */
 [data-testid="stAlert"] { border-radius: 8px; }
 
-/* ── File uploader: forzar fondo claro ── */
+/* ── File uploader: todo claro ── */
 [data-testid="stFileUploader"],
 [data-testid="stFileUploader"] > div,
 [data-testid="stFileUploader"] section,
@@ -126,7 +118,7 @@ hr { border-color: #cec7c3; }
 [data-testid="stFileUploadDropzone"] > div {
     background-color: #f9f7f5 !important;
     color: #2b2b2b !important;
-    border: 2px dashed #c6c6c6 !important;
+    border: 1.5px dashed #c6c6c6 !important;
     border-radius: 8px !important;
 }
 [data-testid="stFileUploadDropzone"] *,
@@ -135,10 +127,14 @@ hr { border-color: #cec7c3; }
     color: #2b2b2b !important;
 }
 [data-testid="stFileUploadDropzone"] button {
-    background-color: #ffffff !important;
-    border: 1px solid #cec7c3 !important;
-    color: #49677a !important;
+    background-color: #49677a !important;
+    border: none !important;
+    color: #ffffff !important;
     border-radius: 6px !important;
+    font-weight: 600 !important;
+}
+[data-testid="stFileUploadDropzone"] button:hover {
+    background-color: #5f6d5f !important;
 }
 [data-testid="stFileUploadDropzone"] small,
 [data-testid="stFileUploadDropzone"] span,
